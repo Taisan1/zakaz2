@@ -9,7 +9,8 @@ import {
   Palette,
   Clock,
   CheckCircle,
-  X
+  X,
+  FolderOpen
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
