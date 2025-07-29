@@ -5,14 +5,13 @@ import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 
 export function LoginForm() {
-  const [isLogin, setIsLogin] = useState(true);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { login, register } = useAuth();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,14 +19,7 @@ export function LoginForm() {
     setError('');
 
     try {
-      if (isLogin) {
-        await login(email, password);
-      } else {
-        if (!name.trim()) {
-          throw new Error('Введите имя');
-        }
-        await register(email, password, name);
-      }
+      await login(email, password);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Произошла ошибка');
     } finally {
@@ -40,46 +32,27 @@ export function LoginForm() {
       <div className="w-full max-w-md space-y-6">
         <div className="text-center">
           <div className="bg-blue-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            {isLogin ? (
-              <LogIn className="h-8 w-8 text-white" />
-            ) : (
-              <UserPlus className="h-8 w-8 text-white" />
-            )}
+            <LogIn className="h-8 w-8 text-white" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900">PhotoAlbums</h2>
           <p className="text-gray-600 mt-2">
-            {isLogin ? 'Вход в систему' : 'Регистрация в системе'}
+            Вход в систему
           </p>
         </div>
 
         <Card>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Полное имя
-                </label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required={!isLogin}
-                  placeholder="Введите ваше полное имя"
-                />
-              </div>
-            )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                {isLogin ? 'Логин' : 'Email'}
+                Логин
               </label>
               <input
-                type={isLogin ? 'text' : 'email'}
+                type="text"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder={isLogin ? 'admin' : 'your@email.com'}
+                placeholder="admin"
                 required
               />
             </div>
@@ -113,36 +86,18 @@ export function LoginForm() {
             )}
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? (isLogin ? 'Вход...' : 'Регистрация...') : (isLogin ? 'Войти' : 'Зарегистрироваться')}
+              {loading ? 'Вход...' : 'Войти'}
             </Button>
           </form>
-
-          <div className="mt-4 text-center">
-            <button
-              type="button"
-              onClick={() => {
-                setIsLogin(!isLogin);
-                setError('');
-                setEmail('');
-                setPassword('');
-                setName('');
-              }}
-              className="text-blue-600 hover:text-blue-800 text-sm"
-            >
-              {isLogin ? 'Нет аккаунта? Зарегистрироваться' : 'Уже есть аккаунт? Войти'}
-            </button>
-          </div>
         </Card>
 
-        {isLogin && (
-          <Card className="bg-blue-50 border-blue-200">
-            <h4 className="font-medium text-blue-900 mb-3">Администратор:</h4>
-            <div className="text-sm text-blue-700">
-              <p>Логин: <strong>admin</strong></p>
-              <p>Пароль: <strong>admin</strong></p>
-            </div>
-          </Card>
-        )}
+        <Card className="bg-blue-50 border-blue-200">
+          <h4 className="font-medium text-blue-900 mb-3">Администратор:</h4>
+          <div className="text-sm text-blue-700">
+            <p>Логин: <strong>admin</strong></p>
+            <p>Пароль: <strong>admin</strong></p>
+          </div>
+        </Card>
       </div>
     </div>
   );
