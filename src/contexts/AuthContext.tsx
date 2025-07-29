@@ -28,11 +28,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const mockUsers: User[] = [
   {
     id: '1',
-    email: 'admin@company.com',
-    name: 'Admin User',
+    email: 'admin',
+    name: 'Администратор',
     role: 'admin',
-    department: 'Management',
-    position: 'System Administrator'
+    department: 'Управление',
+    position: 'Системный администратор',
+    createdAt: new Date()
   },
   {
     id: '2',
@@ -61,7 +62,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const login = async (email: string, password: string): Promise<boolean> => {
     // Mock authentication - in real app, this would call an API
     const foundUser = users.find(u => u.email === email);
-    if (foundUser && password === 'password') { // Simple mock password
+    if (foundUser && password === 'admin') { // Simple mock password
       setUser(foundUser);
       return true;
     }
