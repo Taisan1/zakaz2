@@ -1,1 +1,150 @@
-{"code":"rate-limited","message":"You have hit the rate limit. Please upgrade to keep chatting.","providerLimitHit":false,"isRetryable":true}
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+
+interface User {
+  id: string;
+  email: string;
+  name: string;
+  role: 'admin' | 'employee';
+  department?: string;
+  position?: string;
+  salary?: number;
+}
+
+interface AuthContextType {
+  user: User | null;
+  users: User[];
+  login: (email: string, password: string) => Promise<boolean>;
+  logout: () => void;
+  register: (userData: Omit<User, 'id'> & { password: string }) => Promise<boolean>;
+  addUser: (userData: Omit<User, 'id'>) => void;
+  updateUser: (id: string, userData: Partial<User>) => void;
+  deleteUser: (id: string) => void;
+  isAuthenticated: boolean;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// Mock users data
+const mockUsers: User[] = [
+  {
+    id: '1',
+    email: 'admin@company.com',
+    name: 'Admin User',
+    role: 'admin',
+    department: 'Management',
+    position: 'System Administrator'
+  },
+  {
+    id: '2',
+    email: 'john@company.com',
+    name: 'John Doe',
+    role: 'employee',
+    department: 'Engineering',
+    position: 'Software Developer',
+    salary: 75000
+  },
+  {
+    id: '3',
+    email: 'jane@company.com',
+    name: 'Jane Smith',
+    role: 'employee',
+    department: 'Marketing',
+    position: 'Marketing Manager',
+    salary: 65000
+  }
+];
+
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [users, setUsers] = useState<User[]>(mockUsers);
+
+  const login = async (email: string, password: string): Promise<boolean> => {
+    // Mock authentication - in real app, this would call an API
+    const foundUser = users.find(u => u.email === email);
+    if (foundUser && password === 'password') { // Simple mock password
+      setUser(foundUser);
+      return true;
+    }
+    return false;
+  };
+
+  const logout = () => {
+    setUser(null);
+  };
+
+  const register = async (userData: Omit<User, 'id'> & { password: string }): Promise<boolean> => {
+    // Mock registration - in real app, this would call an API
+    const existingUser = users.find(u => u.email === userData.email);
+    if (existingUser) {
+      return false; // User already exists
+    }
+
+    const newUser: User = {
+      id: Date.now().toString(),
+      email: userData.email,
+      name: userData.name,
+      role: userData.role,
+      department: userData.department,
+      position: userData.position,
+      salary: userData.salary
+    };
+
+    setUsers(prev => [...prev, newUser]);
+    setUser(newUser);
+    return true;
+  };
+
+  const addUser = (userData: Omit<User, 'id'>) => {
+    const newUser: User = {
+      id: Date.now().toString(),
+      ...userData
+    };
+    setUsers(prev => [...prev, newUser]);
+  };
+
+  const updateUser = (id: string, userData: Partial<User>) => {
+    setUsers(prev => prev.map(user => 
+      user.id === id ? { ...user, ...userData } : user
+    ));
+    
+    // Update current user if it's the same user being updated
+    if (user && user.id === id) {
+      setUser(prev => prev ? { ...prev, ...userData } : null);
+    }
+  };
+
+  const deleteUser = (id: string) => {
+    setUsers(prev => prev.filter(user => user.id !== id));
+    
+    // Logout if current user is being deleted
+    if (user && user.id === id) {
+      setUser(null);
+    }
+  };
+
+  const value: AuthContextType = {
+    user,
+    users,
+    login,
+    logout,
+    register,
+    addUser,
+    updateUser,
+    deleteUser,
+    isAuthenticated: !!user
+  };
+
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
