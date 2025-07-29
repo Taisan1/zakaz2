@@ -4,10 +4,14 @@ interface User {
   id: string;
   email: string;
   name: string;
-  role: 'admin' | 'employee';
+  role: 'photographer' | 'designer' | 'admin';
   department?: string;
   position?: string;
   salary?: number;
+  phone?: string;
+  telegram?: string;
+  avatar?: string;
+  createdAt: Date;
 }
 
 interface AuthContextType {
@@ -39,19 +43,21 @@ const mockUsers: User[] = [
     id: '2',
     email: 'john@company.com',
     name: 'John Doe',
-    role: 'employee',
+    role: 'photographer',
     department: 'Engineering',
     position: 'Software Developer',
-    salary: 75000
+    salary: 75000,
+    createdAt: new Date()
   },
   {
     id: '3',
     email: 'jane@company.com',
     name: 'Jane Smith',
-    role: 'employee',
+    role: 'designer',
     department: 'Marketing',
     position: 'Marketing Manager',
-    salary: 65000
+    salary: 65000,
+    createdAt: new Date()
   }
 ];
 
@@ -87,7 +93,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       role: userData.role,
       department: userData.department,
       position: userData.position,
-      salary: userData.salary
+      salary: userData.salary,
+      createdAt: new Date()
     };
 
     setUsers(prev => [...prev, newUser]);
@@ -98,7 +105,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const addUser = (userData: Omit<User, 'id'>) => {
     const newUser: User = {
       id: Date.now().toString(),
-      ...userData
+      ...userData,
+      createdAt: new Date()
     };
     setUsers(prev => [...prev, newUser]);
   };
