@@ -68,7 +68,58 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const login = async (email: string, password: string): Promise<boolean> => {
     // Mock authentication - in real app, this would call an API
     const foundUser = users.find(u => u.email === email);
-    if (foundUser && password === 'admin') { // Simple mock password
+    if (foundUser) {
+      // For admin user, use 'admin' password
+      if (foundUser.email === 'admin' && password === 'admin') {
+        setUser(foundUser);
+        return true;
+      }
+      // For other users, use their email as password (simplified for demo)
+      if (foundUser.email !== 'admin' && password === foundUser.email) {
+        setUser(foundUser);
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const logout = () => {
+    setUser(null);
+  };
+
+  const register = async (userData: Omit<User, 'id'> & { password: string }): Promise<boolean> => {
+    // Mock registration - in real app, this would call an API
+    const existingUser = users.find(u => u.email === userData.email);
+    if (existingUser) {
+      return false; // User already exists
+    }
+
+    const newUser: User = {
+      id: Date.now().toString(),
+      email: userData.email,
+      name: userData.name,
+      role: userData.role,
+      department: userData.department,
+      position: userData.position,
+      salary: userData.salary,
+      phone: userData.phone,
+      telegram: userData.telegram,
+      createdAt: new Date()
+    };
+
+    setUsers(prev => [...prev, newUser]);
+    setUser(newUser);
+    return true;
+  };
+
+  const addUser = (userData: Omit<User, 'id'>) => {
+    const newUser: User = {
+      id: Date.now().toString(),
+      ...userData,
+      createdAt: new Date()
+    };
+    setUsers(prev => [...prev, newUser]);
+  };
       setUser(foundUser);
       return true;
     }

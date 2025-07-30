@@ -19,7 +19,10 @@ export function LoginForm() {
     setError('');
 
     try {
-      await login(email, password);
+      const success = await login(email, password);
+      if (!success) {
+        setError('Неверный логин или пароль');
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Произошла ошибка');
     } finally {
