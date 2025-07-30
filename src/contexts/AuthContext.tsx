@@ -120,47 +120,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
     setUsers(prev => [...prev, newUser]);
   };
-      setUser(foundUser);
-      return true;
-    }
-    return false;
-  };
-
-  const logout = () => {
-    setUser(null);
-  };
-
-  const register = async (userData: Omit<User, 'id'> & { password: string }): Promise<boolean> => {
-    // Mock registration - in real app, this would call an API
-    const existingUser = users.find(u => u.email === userData.email);
-    if (existingUser) {
-      return false; // User already exists
-    }
-
-    const newUser: User = {
-      id: Date.now().toString(),
-      email: userData.email,
-      name: userData.name,
-      role: userData.role,
-      department: userData.department,
-      position: userData.position,
-      salary: userData.salary,
-      createdAt: new Date()
-    };
-
-    setUsers(prev => [...prev, newUser]);
-    setUser(newUser);
-    return true;
-  };
-
-  const addUser = (userData: Omit<User, 'id'>) => {
-    const newUser: User = {
-      id: Date.now().toString(),
-      ...userData,
-      createdAt: new Date()
-    };
-    setUsers(prev => [...prev, newUser]);
-  };
 
   const updateUser = (id: string, userData: Partial<User>) => {
     setUsers(prev => prev.map(user => 
