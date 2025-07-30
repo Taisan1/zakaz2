@@ -3,6 +3,8 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 interface User {
   id: string;
   email: string;
+  login: string;
+  password: string;
   name: string;
   role: 'photographer' | 'designer' | 'admin';
   department?: string;
@@ -33,6 +35,8 @@ const mockUsers: User[] = [
   {
     id: '1',
     email: 'admin',
+    login: 'admin',
+    password: 'admin',
     name: 'Администратор',
     role: 'admin',
     department: 'Управление',
@@ -42,6 +46,8 @@ const mockUsers: User[] = [
   {
     id: '2',
     email: 'john@company.com',
+    login: 'john@company.com',
+    password: 'john@company.com',
     name: 'John Doe',
     role: 'photographer',
     department: 'Engineering',
@@ -52,6 +58,8 @@ const mockUsers: User[] = [
   {
     id: '3',
     email: 'jane@company.com',
+    login: 'jane@company.com',
+    password: 'jane@company.com',
     name: 'Jane Smith',
     role: 'designer',
     department: 'Marketing',
@@ -67,15 +75,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const login = async (email: string, password: string): Promise<boolean> => {
     // Mock authentication - in real app, this would call an API
-    const foundUser = users.find(u => u.email === email);
+    const foundUser = users.find(u => u.login === email);
     if (foundUser) {
-      // For admin user, use 'admin' password
-      if (foundUser.email === 'admin' && password === 'admin') {
-        setUser(foundUser);
-        return true;
-      }
-      // For other users, use their email as password (simplified for demo)
-      if (foundUser.email !== 'admin' && password === foundUser.email) {
+      if (foundUser.password === password) {
         setUser(foundUser);
         return true;
       }
@@ -89,7 +91,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const register = async (userData: Omit<User, 'id'> & { password: string }): Promise<boolean> => {
     // Mock registration - in real app, this would call an API
-    const existingUser = users.find(u => u.email === userData.email);
+    const existingUser = users.find(u => u.login === userData.login);
     if (existingUser) {
       return false; // User already exists
     }
@@ -97,6 +99,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const newUser: User = {
       id: Date.now().toString(),
       email: userData.email,
+      login: userData.login,
+      password: userData.password,
       name: userData.name,
       role: userData.role,
       department: userData.department,
@@ -112,7 +116,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return true;
   };
 
-  const addUser = (userData: Omit<User, 'id'>) => {
+  const addUser = (userData: Omit<User, 'id'> & { password: string }) => {
     const newUser: User = {
       id: Date.now().toString(),
       ...userData,
