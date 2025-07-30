@@ -291,6 +291,18 @@ export function AddEmployee() {
             </form>
           </CardContent>
         </Card>
+
+        <Card className="bg-blue-50 border-blue-200">
+          <h4 className="font-medium text-blue-900 mb-3">Информация для входа:</h4>
+          <div className="text-sm text-blue-700">
+            <p>Данные для входа созданных сотрудников:</p>
+            <ul className="list-disc list-inside mt-2 space-y-1">
+              <li><strong>Логин:</strong> email сотрудника</li>
+              <li><strong>Пароль:</strong> email сотрудника (упрощенно для демо)</li>
+            </ul>
+            <p className="mt-2 text-xs">Например: если email john@company.com, то пароль тоже john@company.com</p>
+          </div>
+        </Card>
       </div>
     </div>
   );
